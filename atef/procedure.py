@@ -79,19 +79,17 @@ class ProcedureStep:
     #: step success requirements, does the step need to complete?
     step_success_required: bool = True
 
-    def allow_verify(self) -> bool:
-        """
-        Whether or not the step can be verified.
-        To be further expanded or overloaded in subclass,
-        """
-        return self.result.severity == Severity.success
-
     def children(self) -> List[Any]:
         """Return children of this group, as a tree view might expect"""
         return []
 
+    def __repr__(self) -> str:
+        repr_str = f"whaha{type(self).__name__}"
+        repr_str += f"({[str(child) for child in self.children()]})"
+        return repr_str
 
-@dataclass
+
+@dataclass(repr=False)
 class ProcedureGroup(ProcedureStep):
     """A group of procedure steps (or nested groups)."""
     #: Steps included in the procedure.
@@ -104,7 +102,7 @@ class ProcedureGroup(ProcedureStep):
             if isinstance(step, ProcedureGroup):
                 yield from step.walk_steps()
 
-    def children(self) -> List[Union[ProcedureStep, ProcedureGroup]]:
+    def children(self) -> Sequence[Union[ProcedureStep, ProcedureGroup]]:
         """Return children of this group, as a tree view might expect"""
         return self.steps
 
