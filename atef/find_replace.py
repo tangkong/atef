@@ -376,6 +376,28 @@ class RegexFindReplace:
             origin=self,
         )
 
+    def __repr__(self) -> str:
+        # assume the first segment is an object
+        if not self.path:
+            repr_str = "()"
+        else:
+            repr_str = ""
+
+        for segment in self.path:
+            if not repr_str:
+                # First item, omit leading.
+                repr_str += f"{segment[1]}"
+            elif segment[0] == "__list__":
+                repr_str += f"[{segment[1]}]"
+            else:
+                # handle simple field
+                repr_str += f".{segment[1]}"
+
+        repr_str += f': ("{self.search_regex}"->"{self.replace_text}")'
+        if self.case_sensitive:
+            repr_str += " (Aa)"
+        return repr_str
+
 
 @dataclass
 class FindReplaceAction:
